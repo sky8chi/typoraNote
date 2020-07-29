@@ -501,3 +501,21 @@ mongodb://mongo1,mongo2,mongo3:27017/dbname_?
 mongodb://mongo-0.mongo.mongo.svc.cluster.local:27017,mongo-1.mongo.mongo.svc.cluster.local:27017,mongo-2.mongo.mongo.svc.cluster.local:27017,mongo-3.mongo.mongo.svc.cluster.local:27017/?replicaSet=rs0
 ```
 
+# 暴露外网访问
+
+```shell
+vim /etc/kubernetes/addons/ingress_nginx/cm-tcp-services.yml
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: tcp-services
+  namespace: ingress-nginx
+  labels:
+    app.kubernetes.io/name: ingress-nginx
+    app.kubernetes.io/part-of: ingress-nginx
+data:
+  27017: "mongo/mongo:27017"
+```
+
