@@ -144,7 +144,7 @@ metadata:
     nginx.ingress.kubernetes.io/backend-protocol: "http"
 spec:
   rules:
-  - host: easymock.kube.fanli.com
+  - host: easymock.kube.kxfo.com
     http:
       paths:
       - path: /

@@ -1,4 +1,12 @@
-# 查看
+# 查看所有
+
+```shell
+kubectl get namespace
+```
+
+
+
+# 查看当前
 
 ```shell
 kubectl config get-contexts

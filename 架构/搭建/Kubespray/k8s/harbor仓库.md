@@ -215,3 +215,44 @@ docker pull harbor.kxfo.com/mall/demo:1.0.0.0
 docker run -it harbor.kxfo.com/mall/demo:1.0.0.0
 ```
 
+
+
+# 指修改远程机器
+
+```
+vim hosts
+[k8s]
+xxx.xxx.xxx.xxx
+```
+
+
+
+```shell
+vim add_to_host.yml
+---
+- hosts: k8s
+  gather_facts: False
+  vars:
+    IP: "10.200.120.236"
+    HOST_NAME: "harbor.kxfo.com"
+  tasks:
+    - name: 在新的hosts文件后面追加各自机器内网ip和hostname
+      lineinfile: dest=/etc/hosts line="{{IP}}  {{HOST_NAME}}"
+      
+ansible-playbook -i hosts add_to_host.yml
+```
+
+ca目录准备上面的ca证书
+
+```shell
+vim cp_ca
+---
+- hosts: k8s
+  gather_facts: False
+  tasks:
+    - name: "add ca"
+      copy: "src=ca/ dest=/etc/docker/certs.d/harbor.kxfo.com"
+      
+ ansible-playbook -i hosts cp_ca.yml
+```
+
