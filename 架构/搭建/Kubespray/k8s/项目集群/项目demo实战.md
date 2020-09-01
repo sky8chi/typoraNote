@@ -1,6 +1,6 @@
 # 代码上传见
 
-[harbor仓库](harbor仓库.md)
+[harbor仓库](../项目基础应用/harbor仓库.md)
 
 # k8s配置
 
