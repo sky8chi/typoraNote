@@ -16,6 +16,13 @@ sh openvpn-install.sh
 
 # 修改服务端配置
 
+# 默认网关
+
+```shell
+# 这条会在client添加一条默认网关全导致server
+push "redirect-gateway def1 bypass-dhcp"
+```
+
 ## 局域网访问
 
 vim /etc/openvpn/server/server.conf
@@ -54,3 +61,50 @@ systemctl start openvpn-server@server.service
 nohup openvpn sky8chi.ovpn &
 ```
 
+# 局域网访问
+
+## client 局域网内ip 访问server
+
+正常应该在交换机配置，权限有限目前只在局域网机器配置
+
+```shell
+# server A
+# client B
+# client局域网  C
+# C要通过B才能访问A
+# C添加： ip route add A局域网ip段  via  B
+ip route add 172.16.250.0/24 via 10.200.15.45
+
+
+```
+
+
+
+# 不通查找的方向
+
+* iptables -L 查看forward链 是否是全局拒绝策略
+
+* ip forward 是否打开
+
+  ```shell
+  /etc/sysctl.conf
+  net.ipv4.ip_forward = 1
+  sysctl -p
+  
+  cat /proc/sys/net/ipv4/ip_forward
+  ```
+
+* 如果是snat方式
+
+  ```shell
+  # 查看postrouting
+  iptables -L -t nat
+  ```
+
+* 路由追踪
+
+  ```shell
+  mtr ip
+  ```
+
+  
