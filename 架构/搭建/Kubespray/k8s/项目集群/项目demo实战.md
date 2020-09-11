@@ -18,6 +18,72 @@ metadata:
 
 
 
+```yaml
+# cat configmap.yaml 
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: filebeat-config
+data:
+  filebeat.yml: |
+    filebeat.inputs:
+    - type: log
+      paths:
+        - "/var/log/yum.log"
+        - "/log/*"
+    output.elasticsearch:
+      hosts: ["192.168.1.19:9600"]
+      index: "filebeat-tomcat-shopxx"
+      
+# 多份 cat configmap.yaml 
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: filebeat-config
+data:
+  filebeat.yml: |
+    filebeat.inputs:
+    - type: log
+      enabled: true 
+      paths:
+        - "/log/error.log"
+      multiline.pattern: '^[0-9]'
+      multiline.negate: true
+      multiline.match: after
+      fields:
+        type: "error"
+    - type: log
+      paths:
+        - "/log/warn.log"
+      multiline.pattern: '^[0-9]'
+      multiline.negate: true
+      multiline.match: after
+      fields:
+        type: "warn"
+    - type: log
+      paths:
+        - "/log/info.log"
+      multiline.pattern: '^[0-9]'
+      multiline.negate: true
+      multiline.match: after
+      fields:
+        type: "info"
+    output.elasticsearch:
+      hosts: ["elasticsearch-master.elk:9200"]
+      indices:
+      - index: "springbootdemo-info-log"
+        when.equals:
+          fields.type: "info"
+      - index: "springbootdemo-warn-log"
+        when.equals:
+          fields.type: "warn"
+      - index: "springbootdemo-error-log"
+        when.equals:
+          fields.type: "error"
+```
+
+
+
 vim deployment.yml
 
 ```yaml
@@ -55,6 +121,19 @@ spec:
         app: springbootdemo
     spec:
       containers:
+      - image: docker.elastic.co/beats/filebeat:7.9.1
+        args: [
+          "-c", "/etc/filebeat.yml",
+          "-e",
+        ]
+        imagePullPolicy: Always
+        name: filebeat
+        volumeMounts:
+        - name: app-logs
+          mountPath: /log
+        - name: filebeat-config
+          mountPath: /etc/filebeat.yml
+          subPath: filebeat.yml
       - name: springbootdemo
         image: harbor.kxfo.com/mall/demo:1.0.0.0
         imagePullPolicy: IfNotPresent
@@ -76,7 +155,18 @@ spec:
             scheme: HTTP
             port: 8080
             path: /test/keepAlive
+        volumeMounts:
+        - name: app-logs
+          mountPath: /home/tomcat/logs
+      volumes:
+      - name: app-logs
+        emptyDir: {}
+      - name: filebeat-config
+        configMap:
+          name: filebeat-config
 ```
+
+
 
 Vim ingress.yml
 

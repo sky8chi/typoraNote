@@ -10,9 +10,20 @@ https://github.com/sky8chi/openvpn-install.git
 
 # 安装
 
+## 服务端
+
 ```
 sh openvpn-install.sh
 ```
+
+## 客户端
+
+```
+yum install -y epel-release
+yum install -y openvpn
+```
+
+
 
 # 修改服务端配置
 
@@ -75,6 +86,8 @@ nohup openvpn sky8chi.ovpn &
 # C添加： ip route add A局域网ip段  via  B
 ip route add 172.16.250.0/24 via 10.200.15.45
 
+# 另一种nat（未印证）
+-A POSTROUTING -s 10.200.15.0/24 -j SNAT --to-source 10.8.0.1
 
 ```
 
@@ -105,6 +118,12 @@ ip route add 172.16.250.0/24 via 10.200.15.45
 
   ```shell
   mtr ip
+  ```
+
+* 路由添加不进去
+
+  ```shell
+  # 网卡 掩码是32位  会失去本机路由功能，每次请求都会转发网关来分配路由
   ```
 
   

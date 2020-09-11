@@ -366,3 +366,36 @@ spec:
 
 
 
+# 集群ip更新(参考)
+
+## 断电后集群重启ip变了
+
+node.conf里还是原ip, 导致cluster一直是down状态
+
+网上说指定cluster-announce-ip，试了下无效，可能是针对单台挂掉的更新
+
+```yaml
+containers:
+      - name: redis
+        image: redis:4.0.6
+        command: ["redis-server"]
+        args:
+        - /etc/redis/redis.conf
+        - --cluster-announce-ip
+        - "$(MY_POD_IP)"
+        env:
+        - name: MY_POD_IP
+          valueFrom:
+            fieldRef:
+              fieldPath: status.podIP
+```
+
+实际我是通过删除data文件操作相当于重新部署个新的集群了
+
+```
+删除 
+rm -rf /var/lib/redis
+或者删除对应的pvc
+重新部署
+```
+
