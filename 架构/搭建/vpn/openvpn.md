@@ -42,7 +42,8 @@ vim /etc/openvpn/server/server.conf
 client-config-dir ccd
 client-to-client
 push "route 172.16.250.0 255.255.255.0" # 告诉客户端服务端路由
-route 10.200.15.0 255.255.255.0  # 告诉服务端客户端路由
+route 10.200.15.0 255.255.255.0  # 告诉服务端客户端1路由
+route 192.168.1.0 255.255.255.0  # 告诉服务端客户端2路由
 ```
 
 创建 ccd
@@ -50,9 +51,11 @@ route 10.200.15.0 255.255.255.0  # 告诉服务端客户端路由
 ```shell
 mkdir /etc/openvpn/server/ccd
 
-vim sky8chi  # 此文件名，要和生成的客户端名一致
+vim 客户端1名称  # 此文件名，要和生成的客户端名一致
 iroute 10.200.15.0 255.255.255.0
 
+vim 客户端2名称
+route 192.168.1.0 255.255.255.0  # 告诉服务端客户端2路由
 ```
 
 # 重启
@@ -89,6 +92,11 @@ ip route add 172.16.250.0/24 via 10.200.15.45
 # 另一种nat（未印证）
 -A POSTROUTING -s 10.200.15.0/24 -j SNAT --to-source 10.8.0.1
 
+
+# 客户端1 访问 客户端2
+# 因为服务端已经写入客户端2路由，那只需要在客户端1，配置客户端2的ip走服务端
+ip route 192.168.1.0/24 via 10.8.0.1
+
 ```
 
 
@@ -100,11 +108,16 @@ ip route add 172.16.250.0/24 via 10.200.15.45
 * ip forward 是否打开
 
   ```shell
+  # linux
   /etc/sysctl.conf
   net.ipv4.ip_forward = 1
   sysctl -p
   
   cat /proc/sys/net/ipv4/ip_forward
+  
+  # mac
+  sudo sysctl -w net.inet.ip.forwarding=1
+  
   ```
 
 * 如果是snat方式
