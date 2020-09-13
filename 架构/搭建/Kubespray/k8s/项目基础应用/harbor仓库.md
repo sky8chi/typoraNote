@@ -166,8 +166,8 @@ SELINUX=disabled
                 </executions>
                 <configuration>
                     <!-- harbor 仓库用户名及密码-->
-<!--                    <username>admin</username>-->
-<!--                    <password>Chtx87_98</password>-->
+<!--                    <username>xxx</username>-->
+<!--                    <password>xxxxxx</password>-->
                     <repository>${docker.registry}/${docker.image.prefix}/${project.artifactId}</repository>
                     <tag>${project.version}</tag>
                     <buildArgs>
