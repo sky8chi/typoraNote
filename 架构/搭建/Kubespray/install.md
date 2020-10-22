@@ -32,6 +32,10 @@ declare -a IPS=(10.200.120.240 10.200.120.241 10.200.120.245 10.200.120.246 10.2
 mv inventory/mycluster/inventory.ini inventory/mycluster/hosts.yml
 CONFIG_FILE=inventory/mycluster/hosts.yml python3 contrib/inventory_builder/inventory.py ${IPS[@]}
 
+# 开启插件见 k8s/ingress-nginx.md
+
+# 修改国内镜像源 见下面 我的私有云
+
 # 如果报sudo: sorry, you must have a tty to run sudo
 # 修改ansible.cfg 中 pipelining = False  （会降速）
 # 或者受控端 /etc/sudoers文件中关闭requiretty
@@ -65,3 +69,40 @@ group_vars/k8s-cluster/k8s-cluster.yml:kube_image_repo: "registry.cn-shanghai.al
 ```
 kubectl get no
 ```
+
+
+
+# 管理节点
+
+## 部署节点
+
+```shell
+ansible-playbook -i inventory/mycluster/hosts.yml cluster.yml -b -vvv
+```
+
+## 扩容节点
+
+```shell
+# 在hosts.yml新增节点执行
+ansible-playbook -i inventory/mycluster/hosts.yml scale.yml
+```
+
+## 删除节点
+
+```shell
+# 删除配置里的集群 host，不是像扩容一样差异化，切记，别把集群删除了
+ansible-playbook -i inventory/mycluster/hosts.yml remove-node.yml -b -v 
+```
+
+## 卸载节点
+
+```shell
+ansible-playbook -i inventory/mycluster/hosts.yml reset.yml -b
+```
+
+## 升级节点
+
+```shell
+ansible-playbook upgrade-cluster.yml -b -i inventory/mycluster/hosts.yml -e kube_version=vX.XX.XX -vvv
+```
+
