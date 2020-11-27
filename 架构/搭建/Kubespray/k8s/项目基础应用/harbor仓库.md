@@ -37,6 +37,25 @@ sudo curl -L https://raw.githubusercontent.com/docker/compose/1.26.2/contrib/com
 
 ```
 
+# 修改镜像存储路径
+
+```shell
+# 此方案针对已经运行过的镜像
+service docker stop
+# 移动数据
+mv /var/lib/docker /home/data/docker
+# 建立软链
+ln -s /home/data/docker /var/lib/docker
+# check 链接 
+ls -al /var/lib/docker
+
+# 启动docker
+sudo systemctl start docker
+
+```
+
+
+
 # 安装harbor
 
 ```shell

@@ -83,7 +83,8 @@ ansible-playbook -i inventory/mycluster/hosts.yml cluster.yml -b -vvv
 ## 扩容节点
 
 ```shell
-# 在hosts.yml新增节点执行
+# 只能用来添加node节点，不能添加mastr节点
+# 在hosts.yml新增节点执行   此操作实测，只有新增时有效，无法用于恢复节点， 可以通过先卸载节点再操作
 ansible-playbook -i inventory/mycluster/hosts.yml scale.yml
 ```
 
@@ -92,11 +93,32 @@ ansible-playbook -i inventory/mycluster/hosts.yml scale.yml
 ```shell
 # 删除配置里的集群 host，不是像扩容一样差异化，切记，别把集群删除了
 ansible-playbook -i inventory/mycluster/hosts.yml remove-node.yml -b -v 
+# 如果文件中只有node6 则会进入 notready状态
+node6   NotReady   <none>   24m   v1.18.4
+
+
+# 正确用法：如果文件中是所有节点，可以指定节点删除，删除了node6同时NotReady也会不存在
+--extra-vars "node=<nodename>,<nodename2>"
+ansible-playbook -i inventory/mycluster/hosts.yml remove-node.yml -b -v --extra-vars "node=node6"
+
+# 貌似不以恢复master， master节点添加执行部署节点
+# 方法一:
+# 如果要恢复节点，需要先执行一遍新增节点，会报kubelet错误
+# 去恢复节点执行 systemctl daemon-reload， 这样kubelet服务就会启动
+# 再次执行新增节点，就成功了  （如果想跳过第一步执行一次新增，先启动kubelet，再执行新增，貌似会不成功，可能缺少部分东西）
+
+# 方法二:
+# 直接卸载节点，再新增
+
+
+
+
 ```
 
 ## 卸载节点
 
 ```shell
+# 除非卸载整个集群，否则不要直接卸载，先删除节点再卸载，否则节点在集群中还是存在的，只是not ready状态
 ansible-playbook -i inventory/mycluster/hosts.yml reset.yml -b
 ```
 

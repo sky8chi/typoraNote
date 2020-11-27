@@ -35,7 +35,7 @@ helm repo add elastic https://helm.elastic.co
 # 安装elk
 
 ```
-helm fetch elastic/elasticsearch
+helm fetch elastic/elasticsearch --version 7.9.1
 
 tar -zxvf elasticsearch-7.9.1.tgz
 ```
@@ -53,7 +53,7 @@ volumeClaimTemplate:
 ```
 
 ```shell
-helm install --name-template my-elk -f values.yaml .
+helm install --namespace elk --name-template my-elk -f values.yaml .
 ```
 
  
@@ -61,7 +61,7 @@ helm install --name-template my-elk -f values.yaml .
 # 安装filebeat
 
 ```shell
-helm fetch elastic/filebeat
+helm fetch elastic/filebeat --version 7.9.1
 tar -zxvf filebeat-7.9.1.tgz
 ```
 
@@ -83,7 +83,7 @@ filebeatConfig:
 
 
 ```
-helm install my-filebeat -f values.yaml .
+helm install --namespace elk my-filebeat -f values.yaml .
 
 kubectl get pods --namespace=elk -l app=my-filebeat-filebeat
 ```
@@ -93,7 +93,7 @@ kubectl get pods --namespace=elk -l app=my-filebeat-filebeat
 # 安装kibana
 
 ```
-helm fetch elastic/kibana
+helm fetch elastic/kibana --version 7.9.1
 tar -zxvf kibana-7.9.1.tgz
 ```
 
@@ -118,7 +118,7 @@ ingress:
 ```
 
 ```
-helm install my-kibana -f values.yaml .
+helm install --namespace elk my-kibana -f values.yaml .
 
 ```
 

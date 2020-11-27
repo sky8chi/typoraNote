@@ -48,5 +48,11 @@ helm  upgrade --set imageTag=5.7.15  bdqn-mysql stable/mysql -f value
 # 回滚
 helm  history  zhb
 helm  rollback  zhb  1
+
+# 查看：
+helm ls
+# 删除：
+helm delete demo --purge
 ```
 
+>  https://github.com/helm/charts/tree/master/stable/openvpn

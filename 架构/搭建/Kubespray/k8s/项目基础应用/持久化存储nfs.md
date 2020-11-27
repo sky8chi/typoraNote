@@ -100,8 +100,6 @@ roleRef:
 
 # 启动nfs provisioner
 
-# 启动nfs provisioner
-
 ```shell
 vim nfs-provisioner.yml
 
