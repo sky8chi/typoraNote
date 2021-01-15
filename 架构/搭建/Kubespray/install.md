@@ -85,7 +85,7 @@ ansible-playbook -i inventory/mycluster/hosts.yml cluster.yml -b -vvv
 ```shell
 # 只能用来添加node节点，不能添加mastr节点
 # 在hosts.yml新增节点执行   此操作实测，只有新增时有效，无法用于恢复节点， 可以通过先卸载节点再操作
-ansible-playbook -i inventory/mycluster/hosts.yml scale.yml
+ansible-playbook -i inventory/mycluster/hosts.yml scale.yml -b
 ```
 
 ## 删除节点
@@ -128,3 +128,6 @@ ansible-playbook -i inventory/mycluster/hosts.yml reset.yml -b
 ansible-playbook upgrade-cluster.yml -b -i inventory/mycluster/hosts.yml -e kube_version=vX.XX.XX -vvv
 ```
 
+## 注意事项
+
+* 节点名字小写
