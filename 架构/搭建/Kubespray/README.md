@@ -24,7 +24,7 @@ cd /data/gitwork
 git clone git@github.com:sky8chi/devops.git
 # k8s 集成软件 (我的clone修改, 官方看下面安装)
 git clone git@github.com:sky8chi/kubespray.git
-git checkout my-2.13.2
+git checkout my-2.14
 ```
 
 ## 机器基本安装
